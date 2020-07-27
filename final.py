@@ -83,7 +83,7 @@ class CustomDataset(utils.Dataset):
         subset: Subset to load: train or val
         """
         # Add classes. We have only one class to add.
-        self.add_class("object", 1, "Paper")
+        self.add_class("Paper", 1, "Paper")
         
 
         # Train or validation dataset?
@@ -105,43 +105,39 @@ class CustomDataset(utils.Dataset):
         #   'size': 100202
         # }
         # We mostly care about the x and y coordinates of each region
-        annotations1 = json.load(open(os.path.join(dataset_dir, "via_region_data.json")))
-        # print(annotations1)
-        annotations = list(annotations1.values())  # don't need the dict keys
+        annotations = json.load(open(os.path.join(dataset_dir, "via_region_data.json")))
+        
+        annotations = list(annotations.values())  # don't need the dict keys
 
         # The VIA tool saves images in the JSON even if they don't have any
         # annotations. Skip unannotated images.
         annotations = [a for a in annotations if a['regions']]
-        
-        # Add images
         for a in annotations:
-            # print(a)
             # Get the x, y coordinaets of points of the polygons that make up
-            # the outline of each object instance. There are stores in the
+            # the outline of each object instance. These are stores in the
             # shape_attributes (see json format above)
-            polygons = [r['shape_attributes'] for r in a['regions']] 
-            objects = [s['region_attributes']['name'] for s in a['regions']]
-            print("objects:",objects)
-            name_dict = {"Paper": 1}
-            # key = tuple(name_dict)
-            num_ids = [name_dict[a] for a in objects]
-     
-            # num_ids = [int(n['Event']) for n in objects]
+            # The if condition is needed to support VIA versions 1.x and 2.x.
+            if type(a['regions']) is dict:
+                polygons = [r['shape_attributes'] for r in a['regions'].values()]
+            else:
+                polygons = [r['shape_attributes'] for r in a['regions']] 
+
             # load_mask() needs the image size to convert polygons to masks.
             # Unfortunately, VIA doesn't include it in JSON, so we must read
             # the image. This is only managable since the dataset is tiny.
-            print("numids",num_ids)
             image_path = os.path.join(dataset_dir, a['filename'])
             image = skimage.io.imread(image_path)
             height, width = image.shape[:2]
 
             self.add_image(
-                "object",  ## for a single class just add the name here
+                "Paper",
                 image_id=a['filename'],  # use file name as a unique image id
                 path=image_path,
                 width=width, height=height,
                 polygons=polygons,
                 num_ids=num_ids)
+       
+       
 
     def load_mask(self, image_id):
         """Generate instance masks for an image.
