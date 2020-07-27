@@ -134,8 +134,7 @@ class CustomDataset(utils.Dataset):
                 image_id=a['filename'],  # use file name as a unique image id
                 path=image_path,
                 width=width, height=height,
-                polygons=polygons,
-                num_ids=num_ids)
+                polygons=polygons)
        
        
 
