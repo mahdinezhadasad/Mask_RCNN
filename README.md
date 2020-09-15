@@ -1,3 +1,8 @@
+Please check out my codes with name of : https://github.com/mahdinezhadasad/Mask_RCNN/blob/master/Mahdi_Paper_detection_test.ipynb
+
+and : https://github.com/mahdinezhadasad/Mask_RCNN/blob/master/Mahdi_Paper_detection_training.ipynb
+
+
 # Mask R-CNN for Object Detection and Segmentation
 
 This is an implementation of [Mask R-CNN](https://arxiv.org/abs/1703.06870) on Python 3, Keras, and TensorFlow. The model generates bounding boxes and segmentation masks for each instance of an object in the image. It's based on Feature Pyramid Network (FPN) and a ResNet101 backbone.
